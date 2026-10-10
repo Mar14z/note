@@ -1,0 +1,124 @@
+---
+title: 博客系统
+type: 项目
+created: 2026-06-03
+updated: 2026-10-10
+tags:
+  - 项目
+  - 博客
+  - Node.js
+status: 进行中
+---
+
+# 博客项目笔记
+
+> 个人博客项目 (Node.js + Express + MongoDB 单体架构) 的关键信息与约定
+
+## 📋 项目信息
+
+| 属性 | 内容 |
+|------|------|
+| 项目名称 | 静墨博客 / blog |
+| 代码位置 | `D:\documents\Code\blog` |
+| 笔记位置 | `D:\documents\note` (本库) |
+| 架构 | Node.js + Express + MongoDB 单体应用，**不是**前后端分离 |
+| 服务器 | Ubuntu 1核1G，IP `161.33.26.40`，SSH `ubuntu@161.33.26.40` |
+| 部署目录 | `/opt/blog`，PM2 管理，Nginx 反向代理到 80 |
+| 部署方式 | `scp` 上传 + `pm2 restart blog`（GitHub 端口不通） |
+| MongoDB | 本地 `mongodb://localhost:27017/blog` |
+| 国内 Google Fonts | 自托管 CSS 在 `public/css/fonts.css`（来自 `fonts.googleapis.cn`），字体文件走 `fonts.gstatic.cn` |
+
+## 📁 项目结构
+
+```
+blog/
+├── server/             # Node 后端
+│   ├── app.js          # Express 入口
+│   ├── config/database.js  # MongoDB 连接 + 种子数据
+│   ├── middleware/auth.js  # JWT 鉴权
+│   ├── models/         # Mongoose 模型 (Article, User, Profile)
+│   ├── routes/         # auth, articles, upload, profile, feed, sitemap
+│   └── middleware/errorHandler.js
+├── views/              # 后端渲染的页面 (index, articles, article, about, gallery, portfolio, links)
+├── public/             # 前端静态资源
+│   ├── css/            # 公共样式 + 自托管字体 fonts.css
+│   ├── js/             # utils, app, article-detail, gallery, portfolio, links, about
+│   └── uploads/        # 上传图片
+├── admin/              # 管理后台 SPA
+│   ├── index.html
+│   ├── app.js          # AdminApp 类
+│   ├── profile.js      # 个人信息编辑页
+│   └── styles.css
+├── .env                # 本地配置 (PORT=3000, MONGODB_URI, JWT_SECRET, JWT_EXPIRES_IN=7d, ADMIN_USERNAME/PASSWORD)
+└── .trae/documents/    # 项目相关文档（如 profile-module-plan.md）
+```
+
+## 🔑 关键约定与坑
+
+### 数据模型
+- `User` 密码由 Mongoose `pre('save')` 自动 bcrypt 哈希，**创建时传明文**；不要手动 `bcrypt.hash` 否则双重哈希
+- `Article.slug` 必须匹配 `^[a-z0-9-]+$`，中文标题走 `Date.now()` 兜底
+- `Profile` 是单例文档（整个 collection 只有一条），用 `findOneAndUpdate({}, update, {upsert:true})`
+
+### 前后端分离？**不是**
+- 后端用 `app.get('/xxx', (req,res)=>res.sendFile(...))` 直接渲染 HTML
+- 管理后台 `/admin` 是独立静态目录
+- 数据通过 `/api/*` JSON 接口交互
+- **不能**静态部署到 GitHub Pages（需要 Node + Mongo 服务）
+
+### 内容维护策略
+| 内容 | 维护方式 |
+|------|---------|
+| 文章 | 管理后台「文章管理」页面（增删改查 + 发布/草稿） |
+| 文章源文件 | Obsidian vault `01 - Blog/*.md` 目录（带 frontmatter） |
+| 个人信息（关于页） | 管理后台「个人信息」页面，对应 `Profile` 模型 |
+| 作品集 / 友链 / 相册 | 仍是静态页面 |
+
+### 个人信息模块（路线B 实施）
+- 后端：`GET /api/profile`（公开）、`PUT /api/profile`（需 admin JWT）
+- 模型字段：`intro`、`education[]`、`experiences[]`、`skills{technical,soft}`、`contacts[{type,label,value,url}]`
+- 前台：`views/about.html` 用空容器挂载点，`public/js/about.js` 拉接口渲染
+- 后台：`admin/index.html` 侧栏「个人信息」菜单 + `profilePage`，`admin/profile.js` 提供增删改
+- 联系方式 type 枚举：`phone/email/github/wechat/twitter/weibo/link`
+
+### 性能优化要点
+- **Google Fonts 国内不可达**：通过 `fonts.googleapis.cn` 拿 CSS 下载到 `public/css/fonts.css`，字体文件自动走 `fonts.gstatic.cn`
+- 不要再用 `fonts.googleapis.com` 或 `fonts.font.im`（浏览器会 `ERR_CONNECTION_CLOSED`）
+- 静态资源已配置 `Cache-Control` 与 ETag
+
+## 🚀 本地开发
+
+```powershell
+# 确保 mongod 在跑（PID 5100）
+# 启动
+cd "D:\documents\Code\blog"; node server/app.js
+# 访问
+http://localhost:3000        # 前台
+http://localhost:3000/admin  # 后台 (admin / admin123)
+```
+
+## 🌐 服务器部署要点
+
+- 服务器只有 1GB 内存，必须配 2GB swap
+- MongoDB 配 `cacheSizeGB: 0.25`
+- Nginx 反代 80，需要 `iptables` 放行
+- `.env` 文件权限 `chown ubuntu:ubuntu`（PM2 用 ubuntu 用户读）
+- 必须包含 `JWT_EXPIRES_IN=7d`，否则登录会 500
+- 上传文件：`scp <本地文件> ubuntu@161.33.26.40:/opt/blog/<路径>` + `pm2 restart blog`
+
+## ✅ 当前模块状态
+
+| 模块 | 状态 |
+|------|------|
+| 文章 CRUD + 发布/草稿 | ✅ 完成 |
+| 用户认证 + JWT | ✅ 完成 |
+| 文件上传 | ✅ 完成 |
+| 个人信息管理（路线B） | ✅ 本地完成，待推服务器 |
+| 作品集 / 友链 / 相册 | 静态展示，未做后台 |
+| 系统设置 | 仅前端 localStorage（待迁数据库） |
+
+## 📝 待办
+
+- [ ] 推个人信息模块到服务器
+- [ ] 系统设置改成持久化到 MongoDB
+- [ ] 作品集做成可后台编辑
