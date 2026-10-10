@@ -1,4 +1,4 @@
-﻿---
+---
 title: 编写可维护代码的十大原则
 category: 编程
 tags:
