@@ -26,6 +26,7 @@
 | 计划 | 状态 | 进度 | 计划页 |
 |------|:----:|:----:|--------|
 | **计算机视觉** | 🟢 进行中 | 0% | [[ComputerVision]] |
+| **机器人开发** | ⚪ 暂未开始 | 0% | [[Robotics]] |
 | 设计 | ⚪ 暂未开始 | 0% | [[Design]] |
 | 编程 | 🟡 进行中 | 30% | [[Programming]] |
 | 其他 | ⚪ 暂未开始 | 0% | [[Other]] |
@@ -44,6 +45,13 @@
   - [[ComputerVision/实战项目]]
   - [[ComputerVision/资源清单]]
 
+### 机器人开发
+- [[Robotics]] - 机器人开发学习计划（ROS 2 / Gazebo / MoveIt 2 / 抓取算法）
+  - [[Robotics/起点路线]] - 本月立刻能开始的个性化路线
+  - [[Robotics/MoveIt2深入理解]] - MoveIt 2 架构与 API 详解
+  - [[Robotics/C++与姿态解算学习素材]] - C++ 速成与姿态解算资源
+  - [[Robotics/C++核心8点详解]] - 8 个核心点原理 + ROS 2 实战
+
 ### 编程
 - [[Programming]] - 编程学习计划
   - [[Programming/C语言基础]]
@@ -60,7 +68,7 @@
 ## 📈 全局进度
 
 ```
-总学习计划：4
+总学习计划：5
 进行中：2   (CV, Programming)
 已完成：0
 ```

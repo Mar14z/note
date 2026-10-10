@@ -1,0 +1,6 @@
+# 临时目录
+.tmp/
+# 上传缓存
+.uploads/
+# 编辑器/Agent 工作目录
+.trae/
