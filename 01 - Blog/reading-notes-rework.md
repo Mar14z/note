@@ -1,4 +1,4 @@
----
+﻿---
 title: 《重来》读书笔记：更简单的工作方式
 category: 读书
 tags:
@@ -6,7 +6,7 @@ tags:
   - 产品
   - 创业
   - 工作方法
-date: 2024-05-07
+date: 2026-08-14
 published: true
 ---
 
