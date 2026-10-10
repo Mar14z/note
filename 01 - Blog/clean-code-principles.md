@@ -1,11 +1,11 @@
----
+﻿---
 title: 编写可维护代码的十大原则
 category: 编程
 tags:
   - 代码质量
   - 最佳实践
   - Clean Code
-date: 2024-05-07
+date: 2026-02-18
 published: true
 ---
 
