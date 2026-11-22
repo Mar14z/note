@@ -8,6 +8,8 @@ tags:
   - 仿真
   - 开发日志
 date: 2026-10-20
+series: SpatialReach 开发日志
+series_order: 1
 published: true
 excerpt: 一台 PhantomX Pincher、一只单目摄像头，加上一块 RDK X5。目标：让开发板自己回答“我在哪、物体在哪、它们是什么关系”。这是 SpatialReach 的第一篇开发日志。
 ---
